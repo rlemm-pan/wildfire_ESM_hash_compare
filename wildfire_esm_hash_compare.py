@@ -137,14 +137,22 @@ def analyze_and_move_files():
                                 os.rename(os.path.join(root,file), os.path.join(grayware_path,file))
                             else:
                                 os.rename(os.path.join(root,file), os.path.join(grayware_path,file))
-                    elif wildfire_last_result == 3:
-                        pass
 
                 cursor.execute('SELECT * FROM ProcessHashesData WHERE LastWildfireResult=%s', '0')
                 for row in cursor:
                     esm_256_hash = row[1]
                     wildfire_last_result = row[6]
-                    if wildfire_last_result == 0:
+                    if hash_256 != esm_256_hash:
+                        read_hashes = open(hash_file, 'r')
+                        if re.findall(r''+hash_256+'', read_hashes.read()):
+                            pass
+                        else:
+                            print "Sending to Wildfire to match hash", hash_256
+                            hashes_not_in_esm = open(hash_file, "ab+")
+                            hashes_not_in_esm.writelines(hash_256+'\n')
+                            hashes_not_in_esm.close()
+                        read_hashes.close()
+                    elif wildfire_last_result == 0:
                         if hash_256 == esm_256_hash:
                             print "ESM Benign Hash matches " + os.path.join(root,file), esm_256_hash, wildfire_last_result
                             if os.path.exists(os.path.join(benign_path,file)):
@@ -163,7 +171,17 @@ def analyze_and_move_files():
                 for row in cursor:
                     esm_256_hash = row[1]
                     wildfire_last_result = row[6]
-                    if wildfire_last_result == 2:
+                    if hash_256 != esm_256_hash:
+                        read_hashes = open(hash_file, 'r')
+                        if re.findall(r''+hash_256+'', read_hashes.read()):
+                            pass
+                        else:
+                            print "Sending to Wildfire to match hash", hash_256
+                            hashes_not_in_esm = open(hash_file, "ab+")
+                            hashes_not_in_esm.writelines(hash_256+'\n')
+                            hashes_not_in_esm.close()
+                        read_hashes.close()
+                    elif wildfire_last_result == 2:
                         if hash_256 == esm_256_hash:
                             print "ESM Grayware Hash matches " + os.path.join(root,file), esm_256_hash, wildfire_last_result
                             if os.path.exists(os.path.join(grayware_path,file)):
@@ -171,8 +189,6 @@ def analyze_and_move_files():
                                 os.rename(os.path.join(root,file), os.path.join(grayware_path,file))
                             else:
                                 os.rename(os.path.join(root,file), os.path.join(grayware_path,file))
-                    elif wildfire_last_result == 3:
-                        pass
                     elif wildfire_last_result == 5:
                         if hash_256 == esm_256_hash:
                             print "ESM Grayware Hash matches " + os.path.join(root,file), esm_256_hash, wildfire_last_result
@@ -181,14 +197,22 @@ def analyze_and_move_files():
                                 os.rename(os.path.join(root,file), os.path.join(grayware_path,file))
                             else:
                                 os.rename(os.path.join(root,file), os.path.join(grayware_path,file))
-                    elif wildfire_last_result == 6:
-                        pass
 
                 cursor.execute('SELECT * FROM ProcessHashesData WHERE LastWildfireResult=%s', '0')
                 for row in cursor:
                     esm_256_hash = row[1]
                     wildfire_last_result = row[6]
-                    if wildfire_last_result == 0:
+                    if hash_256 != esm_256_hash:
+                        read_hashes = open(hash_file, 'r')
+                        if re.findall(r''+hash_256+'', read_hashes.read()):
+                            pass
+                        else:
+                            print "Sending to Wildfire to match hash", hash_256
+                            hashes_not_in_esm = open(hash_file, "ab+")
+                            hashes_not_in_esm.writelines(hash_256+'\n')
+                            hashes_not_in_esm.close()
+                        read_hashes.close()
+                    elif wildfire_last_result == 0:
                         if hash_256 == esm_256_hash:
                             print "ESM Benign Hash matches " + os.path.join(root,file), esm_256_hash, wildfire_last_result
                             if os.path.exists(os.path.join(benign_path,file)):
@@ -207,7 +231,17 @@ def analyze_and_move_files():
                 for row in cursor:
                     esm_256_hash = row[1]
                     wildfire_last_result = row[6]
-                    if wildfire_last_result == 1:
+                    if hash_256 != esm_256_hash:
+                        read_hashes = open(hash_file, 'r')
+                        if re.findall(r''+hash_256+'', read_hashes.read()):
+                            pass
+                        else:
+                            print "Sending to Wildfire to match hash", hash_256
+                            hashes_not_in_esm = open(hash_file, "ab+")
+                            hashes_not_in_esm.writelines(hash_256+'\n')
+                            hashes_not_in_esm.close()
+                        read_hashes.close()
+                    elif wildfire_last_result == 1:
                         if hash_256 == esm_256_hash:
                             print "ESM Malware Hash matches " + os.path.join(root,file), esm_256_hash, wildfire_last_result
                             if os.path.exists(os.path.join(malware_path,file)):
@@ -223,8 +257,6 @@ def analyze_and_move_files():
                                 os.rename(os.path.join(root,file), os.path.join(grayware_path,file))
                             else:
                                 os.rename(os.path.join(root,file), os.path.join(grayware_path,file))
-                    elif wildfire_last_result == 3:
-                        pass
                     elif wildfire_last_result == 5:
                         if hash_256 == esm_256_hash:
                             print "ESM Grayware Hash matches " + os.path.join(root,file), esm_256_hash, wildfire_last_result
@@ -233,8 +265,6 @@ def analyze_and_move_files():
                                 os.rename(os.path.join(root,file), os.path.join(grayware_path,file))
                             else:
                                 os.rename(os.path.join(root,file), os.path.join(grayware_path,file))
-                    elif wildfire_last_result == 6:
-                        pass
 
                 conn.close()
 
@@ -247,7 +277,17 @@ def analyze_and_move_files():
                 for row in cursor:
                     esm_256_hash = row[1]
                     wildfire_last_result = row[6]
-                    if wildfire_last_result == 1:
+                    if hash_256 != esm_256_hash:
+                        read_hashes = open(hash_file, 'r')
+                        if re.findall(r''+hash_256+'', read_hashes.read()):
+                            pass
+                        else:
+                            print "Sending to Wildfire to match hash", hash_256
+                            hashes_not_in_esm = open(hash_file, "ab+")
+                            hashes_not_in_esm.writelines(hash_256+'\n')
+                            hashes_not_in_esm.close()
+                        read_hashes.close()
+                    elif wildfire_last_result == 1:
                         if hash_256 == esm_256_hash:
                             print "ESM Malware Hash matches " + os.path.join(root,file), esm_256_hash, wildfire_last_result
                             if os.path.exists(os.path.join(malware_path,file)):
@@ -255,16 +295,22 @@ def analyze_and_move_files():
                                 os.rename(os.path.join(root,file), os.path.join(malware_path,file))
                             else:
                                 os.rename(os.path.join(root,file), os.path.join(malware_path,file))
-                    elif wildfire_last_result == 3:
-                        pass
-                    elif wildfire_last_result == 6:
-                        pass
 
                 cursor.execute('SELECT * FROM ProcessHashesData WHERE LastWildfireResult=%s', '0')
                 for row in cursor:
                     esm_256_hash = row[1]
                     wildfire_last_result = row[6]
-                    if wildfire_last_result == 0:
+                    if hash_256 != esm_256_hash:
+                        read_hashes = open(hash_file, 'r')
+                        if re.findall(r''+hash_256+'', read_hashes.read()):
+                            pass
+                        else:
+                            print "Sending to Wildfire to match hash", hash_256
+                            hashes_not_in_esm = open(hash_file, "ab+")
+                            hashes_not_in_esm.writelines(hash_256+'\n')
+                            hashes_not_in_esm.close()
+                        read_hashes.close()
+                    elif wildfire_last_result == 0:
                         if hash_256 == esm_256_hash:
                             print "ESM Benign Hash matches " + os.path.join(root,file), esm_256_hash, wildfire_last_result
                             if os.path.exists(os.path.join(benign_path,file)):
@@ -275,97 +321,114 @@ def analyze_and_move_files():
                 conn.close()
 
         files = {'apikey': (None, api_key),'file': (hash_file, open(hash_file, 'rb'))}
-        if os.stat(hash_file).st_size != 0:
-            xml_tree = ET.fromstring(requests.post('https://wildfire.paloaltonetworks.com/publicapi/get/verdicts', files=files).content)
-            for item in xml_tree.iter("wildfire"):
-                for item in xml_tree.iter("get-verdict-info"):
-                    for root, dirs, files in os.walk(r''+staging_directory+''):
-                        for file in files:
-                            hash_256 = sha256_checksum(os.path.join(root,file))
-                            if item.find("sha256").text == hash_256:
-                                if item.find("verdict").text == '0':
-                                    print "WildFire Benign Hash matches " + os.path.join(root,file), hash_256
-                                    if os.path.exists(os.path.join(benign_path,file)):
-                                        os.remove(os.path.join(benign_path,file))
-                                        os.rename(os.path.join(root,file), os.path.join(benign_path,file))
-                                    else:
-                                        os.rename(os.path.join(root,file), os.path.join(benign_path,file))
-                                elif item.find("verdict").text == '1':
-                                    print "WildFire Malware Hash matches " + os.path.join(root,file), hash_256
-                                    if os.path.exists(os.path.join(malware_path,file)):
-                                        os.remove(os.path.join(malware_path,file))
-                                        os.rename(os.path.join(root,file), os.path.join(malware_path,file))
-                                    else:
-                                        os.rename(os.path.join(root,file), os.path.join(malware_path,file))
-                                elif item.find("verdict").text == '2':
-                                    print "WildFire Grayware Hash matches " + os.path.join(root,file), hash_256
-                                    if os.path.exists(os.path.join(grayware_path,file)):
-                                        os.remove(os.path.join(grayware_path,file))
-                                        os.rename(os.path.join(root,file), os.path.join(grayware_path,file))
-                                    else:
-                                        os.rename(os.path.join(root,file), os.path.join(grayware_path,file))
+        xml_tree = ET.fromstring(requests.post('https://wildfire.paloaltonetworks.com/publicapi/get/verdicts', files=files).content)
+        for item in xml_tree.iter("wildfire"):
+            for item in xml_tree.iter("get-verdict-info"):
+                for root, dirs, files in os.walk(r''+staging_directory+''):
+                    for file in files:
+                        hash_256 = sha256_checksum(os.path.join(root,file))
+                        if item.find("sha256").text == hash_256:
+                            if item.find("verdict").text == '0':
+                                print "WildFire Benign Hash matches " + os.path.join(root,file), hash_256
+                                if os.path.exists(os.path.join(benign_path,file)):
+                                    os.remove(os.path.join(benign_path,file))
+                                    os.rename(os.path.join(root,file), os.path.join(benign_path,file))
                                 else:
-                                    pass
-                    for root, dirs, files in os.walk(r''+benign_path+''):
-                        for file in files:
-                            hash_256 = sha256_checksum(os.path.join(root,file))
-                            if item.find("sha256").text == hash_256:
-                                if item.find("verdict").text == '1':
-                                    print "WildFire Malware Hash matches " + os.path.join(root,file), hash_256
-                                    if os.path.exists(os.path.join(malware_path,file)):
-                                        os.remove(os.path.join(malware_path,file))
-                                        os.rename(os.path.join(root,file), os.path.join(malware_path,file))
-                                    else:
-                                        os.rename(os.path.join(root,file), os.path.join(malware_path,file))
-                                elif item.find("verdict").text == '2':
-                                    print "WildFire Grayware Hash matches " + os.path.join(root,file), hash_256
-                                    if os.path.exists(os.path.join(grayware_path,file)):
-                                        os.remove(os.path.join(grayware_path,file))
-                                        os.rename(os.path.join(root,file), os.path.join(grayware_path,file))
-                                    else:
-                                        os.rename(os.path.join(root,file), os.path.join(grayware_path,file))
+                                    os.rename(os.path.join(root,file), os.path.join(benign_path,file))
+                            elif item.find("verdict").text == '1':
+                                print "WildFire Malware Hash matches " + os.path.join(root,file), hash_256
+                                if os.path.exists(os.path.join(malware_path,file)):
+                                    os.remove(os.path.join(malware_path,file))
+                                    os.rename(os.path.join(root,file), os.path.join(malware_path,file))
                                 else:
-                                    pass
-                    for root, dirs, files in os.walk(r''+grayware_path+''):
-                        for file in files:
-                            hash_256 = sha256_checksum(os.path.join(root,file))
-                            if item.find("sha256").text == hash_256:
-                                if item.find("verdict").text == '0':
-                                    print "WildFire Benign Hash matches " + os.path.join(root,file), hash_256
-                                    if os.path.exists(os.path.join(benign_path,file)):
-                                        os.remove(os.path.join(benign_path,file))
-                                        os.rename(os.path.join(root,file), os.path.join(benign_path,file))
-                                    else:
-                                        os.rename(os.path.join(root,file), os.path.join(benign_path,file))
-                                elif item.find("verdict").text == '1':
-                                    print "WildFire Malware Hash matches " + os.path.join(root,file), hash_256
-                                    if os.path.exists(os.path.join(malware_path,file)):
-                                        os.remove(os.path.join(malware_path,file))
-                                        os.rename(os.path.join(root,file), os.path.join(malware_path,file))
-                                    else:
-                                        os.rename(os.path.join(root,file), os.path.join(malware_path,file))
+                                    os.rename(os.path.join(root,file), os.path.join(malware_path,file))
+                            elif item.find("verdict").text == '2':
+                                print "WildFire Grayware Hash matches " + os.path.join(root,file), hash_256
+                                if os.path.exists(os.path.join(grayware_path,file)):
+                                    os.remove(os.path.join(grayware_path,file))
+                                    os.rename(os.path.join(root,file), os.path.join(grayware_path,file))
                                 else:
-                                    pass
-                    for root, dirs, files in os.walk(r''+malware_path+''):
-                        for file in files:
-                            hash_256 = sha256_checksum(os.path.join(root,file))
-                            if item.find("sha256").text == hash_256:
-                                if item.find("verdict").text == '0':
-                                    print "WildFire Benign Hash matches " + os.path.join(root,file), hash_256
-                                    if os.path.exists(os.path.join(benign_path,file)):
-                                        os.remove(os.path.join(benign_path,file))
-                                        os.rename(os.path.join(root,file), os.path.join(benign_path,file))
-                                    else:
-                                        os.rename(os.path.join(root,file), os.path.join(benign_path,file))
-                                elif item.find("verdict").text == '2':
-                                    print "WildFire Grayware Hash matches " + os.path.join(root,file), hash_256
-                                    if os.path.exists(os.path.join(grayware_path,file)):
-                                        os.remove(os.path.join(grayware_path,file))
-                                        os.rename(os.path.join(root,file), os.path.join(grayware_path,file))
-                                    else:
-                                        os.rename(os.path.join(root,file), os.path.join(grayware_path,file))
+                                    os.rename(os.path.join(root,file), os.path.join(grayware_path,file))
+                        else:
+                            continue
+        files = {'apikey': (None, api_key),'file': (hash_file, open(hash_file, 'rb'))}
+        xml_tree = ET.fromstring(requests.post('https://wildfire.paloaltonetworks.com/publicapi/get/verdicts', files=files).content)
+        for item in xml_tree.iter("wildfire"):
+            for item in xml_tree.iter("get-verdict-info"):
+                for root, dirs, files in os.walk(r''+benign_path+''):
+                    for file in files:
+                        hash_256 = sha256_checksum(os.path.join(root,file))
+                        if item.find("sha256").text == hash_256:
+                            if item.find("verdict").text == '1':
+                                print "WildFire Malware Hash matches " + os.path.join(root,file), hash_256
+                                if os.path.exists(os.path.join(malware_path,file)):
+                                    os.remove(os.path.join(malware_path,file))
+                                    os.rename(os.path.join(root,file), os.path.join(malware_path,file))
                                 else:
-                                    pass
+                                    os.rename(os.path.join(root,file), os.path.join(malware_path,file))
+                            elif item.find("verdict").text == '2':
+                                print "WildFire Grayware Hash matches " + os.path.join(root,file), hash_256
+                                if os.path.exists(os.path.join(grayware_path,file)):
+                                    os.remove(os.path.join(grayware_path,file))
+                                    os.rename(os.path.join(root,file), os.path.join(grayware_path,file))
+                                else:
+                                    os.rename(os.path.join(root,file), os.path.join(grayware_path,file))
+                            elif item.find("verdict").text == '0':
+                                continue
+                        else:
+                            continue
+        files = {'apikey': (None, api_key),'file': (hash_file, open(hash_file, 'rb'))}
+        xml_tree = ET.fromstring(requests.post('https://wildfire.paloaltonetworks.com/publicapi/get/verdicts', files=files).content)
+        for item in xml_tree.iter("wildfire"):
+            for item in xml_tree.iter("get-verdict-info"):
+                for root, dirs, files in os.walk(r''+grayware_path+''):
+                    for file in files:
+                        hash_256 = sha256_checksum(os.path.join(root,file))
+                        if item.find("sha256").text == hash_256:
+                            if item.find("verdict").text == '0':
+                                print "WildFire Benign Hash matches " + os.path.join(root,file), hash_256
+                                if os.path.exists(os.path.join(benign_path,file)):
+                                    os.remove(os.path.join(benign_path,file))
+                                    os.rename(os.path.join(root,file), os.path.join(benign_path,file))
+                                else:
+                                    os.rename(os.path.join(root,file), os.path.join(benign_path,file))
+                            elif item.find("verdict").text == '1':
+                                print "WildFire Malware Hash matches " + os.path.join(root,file), hash_256
+                                if os.path.exists(os.path.join(malware_path,file)):
+                                    os.remove(os.path.join(malware_path,file))
+                                    os.rename(os.path.join(root,file), os.path.join(malware_path,file))
+                                else:
+                                    os.rename(os.path.join(root,file), os.path.join(malware_path,file))
+                            elif item.find("verdict").text == '2':
+                                continue
+                        else:
+                            continue
+        files = {'apikey': (None, api_key),'file': (hash_file, open(hash_file, 'rb'))}
+        xml_tree = ET.fromstring(requests.post('https://wildfire.paloaltonetworks.com/publicapi/get/verdicts', files=files).content)
+        for item in xml_tree.iter("wildfire"):
+            for item in xml_tree.iter("get-verdict-info"):
+                for root, dirs, files in os.walk(r''+malware_path+''):
+                    for file in files:
+                        hash_256 = sha256_checksum(os.path.join(root,file))
+                        if item.find("sha256").text == hash_256:
+                            if item.find("verdict").text == '0':
+                                print "WildFire Benign Hash matches " + os.path.join(root,file), hash_256
+                                if os.path.exists(os.path.join(benign_path,file)):
+                                    os.remove(os.path.join(benign_path,file))
+                                    os.rename(os.path.join(root,file), os.path.join(benign_path,file))
+                                else:
+                                    os.rename(os.path.join(root,file), os.path.join(benign_path,file))
+                            elif item.find("verdict").text == '2':
+                                print "WildFire Grayware Hash matches " + os.path.join(root,file), hash_256
+                                if os.path.exists(os.path.join(grayware_path,file)):
+                                    os.remove(os.path.join(grayware_path,file))
+                                    os.rename(os.path.join(root,file), os.path.join(grayware_path,file))
+                                else:
+                                    os.rename(os.path.join(root,file), os.path.join(grayware_path,file))
+                            elif item.find("verdict").text == '1':
+                                continue
+                        else:
+                            continue
         f = open(hash_file, 'r+')
         f.truncate()
         f.close()
