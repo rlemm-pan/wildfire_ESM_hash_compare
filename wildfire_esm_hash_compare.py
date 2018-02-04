@@ -84,6 +84,28 @@ if args.k:
 if args.w:
     hash_file = args.w
 
+conn = pymssql.connect(server=server, user=user, password=password, database=database)
+
+def empty_file():
+    global hash_file
+    try:
+        f = open(hash_file, 'r+')
+        f.truncate()
+        f.close()
+    except IOError as e:
+        print e
+        pass
+
+    except Exception as e:
+        print e
+        pass
+
+    except:
+        print "Unexpected error:", sys.exc_info()[0]
+        pass
+
+empty_file()
+
 def sha256_checksum(filename, block_size=65536):
     sha256 = hashlib.sha256()
     with open(filename, 'rb') as f:
@@ -92,8 +114,9 @@ def sha256_checksum(filename, block_size=65536):
     return sha256.hexdigest()
 
 def analyze_and_move_files():
-    global malware_path, benign_path, staging_directory, server, user, password, database
+    global malware_path, benign_path, staging_directory, server, user, password, database, conn
     try:
+        empty_file()
         for root, dirs, files in os.walk(r''+staging_directory+''):
             for file in files:
                 hash_256 = sha256_checksum(os.path.join(root,file))
@@ -319,131 +342,130 @@ def analyze_and_move_files():
                             else:
                                 os.rename(os.path.join(root,file), os.path.join(benign_path,file))
                 conn.close()
+        if os.stat(hash_file).st_size != 0:
+            files = {'apikey': (None, api_key),'file': (hash_file, open(hash_file, 'rb'))}
+            xml_tree = ET.fromstring(requests.post('https://wildfire.paloaltonetworks.com/publicapi/get/verdicts', files=files).content)
+            for item in xml_tree.iter("wildfire"):
+                for item in xml_tree.iter("get-verdict-info"):
+                    for root, dirs, files in os.walk(r''+staging_directory+''):
+                        for file in files:
+                            hash_256 = sha256_checksum(os.path.join(root,file))
+                            if item.find("sha256").text == hash_256:
+                                if item.find("verdict").text == '0':
+                                    print "WildFire Benign Hash matches " + os.path.join(root,file), hash_256
+                                    if os.path.exists(os.path.join(benign_path,file)):
+                                        os.remove(os.path.join(benign_path,file))
+                                        os.rename(os.path.join(root,file), os.path.join(benign_path,file))
+                                    else:
+                                        os.rename(os.path.join(root,file), os.path.join(benign_path,file))
+                                elif item.find("verdict").text == '1':
+                                    print "WildFire Malware Hash matches " + os.path.join(root,file), hash_256
+                                    if os.path.exists(os.path.join(malware_path,file)):
+                                        os.remove(os.path.join(malware_path,file))
+                                        os.rename(os.path.join(root,file), os.path.join(malware_path,file))
+                                    else:
+                                        os.rename(os.path.join(root,file), os.path.join(malware_path,file))
+                                elif item.find("verdict").text == '2':
+                                    print "WildFire Grayware Hash matches " + os.path.join(root,file), hash_256
+                                    if os.path.exists(os.path.join(grayware_path,file)):
+                                        os.remove(os.path.join(grayware_path,file))
+                                        os.rename(os.path.join(root,file), os.path.join(grayware_path,file))
+                                    else:
+                                        os.rename(os.path.join(root,file), os.path.join(grayware_path,file))
+                            else:
+                                continue
+            files = {'apikey': (None, api_key),'file': (hash_file, open(hash_file, 'rb'))}
+            xml_tree = ET.fromstring(requests.post('https://wildfire.paloaltonetworks.com/publicapi/get/verdicts', files=files).content)
+            for item in xml_tree.iter("wildfire"):
+                for item in xml_tree.iter("get-verdict-info"):
+                    for root, dirs, files in os.walk(r''+benign_path+''):
+                        for file in files:
+                            hash_256 = sha256_checksum(os.path.join(root,file))
+                            if item.find("sha256").text == hash_256:
+                                if item.find("verdict").text == '1':
+                                    print "WildFire Malware Hash matches " + os.path.join(root,file), hash_256
+                                    if os.path.exists(os.path.join(malware_path,file)):
+                                        os.remove(os.path.join(malware_path,file))
+                                        os.rename(os.path.join(root,file), os.path.join(malware_path,file))
+                                    else:
+                                        os.rename(os.path.join(root,file), os.path.join(malware_path,file))
+                                elif item.find("verdict").text == '2':
+                                    print "WildFire Grayware Hash matches " + os.path.join(root,file), hash_256
+                                    if os.path.exists(os.path.join(grayware_path,file)):
+                                        os.remove(os.path.join(grayware_path,file))
+                                        os.rename(os.path.join(root,file), os.path.join(grayware_path,file))
+                                    else:
+                                        os.rename(os.path.join(root,file), os.path.join(grayware_path,file))
+                                elif item.find("verdict").text == '0':
+                                    continue
+                            else:
+                                continue
+            files = {'apikey': (None, api_key),'file': (hash_file, open(hash_file, 'rb'))}
+            xml_tree = ET.fromstring(requests.post('https://wildfire.paloaltonetworks.com/publicapi/get/verdicts', files=files).content)
+            for item in xml_tree.iter("wildfire"):
+                for item in xml_tree.iter("get-verdict-info"):
+                    for root, dirs, files in os.walk(r''+grayware_path+''):
+                        for file in files:
+                            hash_256 = sha256_checksum(os.path.join(root,file))
+                            if item.find("sha256").text == hash_256:
+                                if item.find("verdict").text == '0':
+                                    print "WildFire Benign Hash matches " + os.path.join(root,file), hash_256
+                                    if os.path.exists(os.path.join(benign_path,file)):
+                                        os.remove(os.path.join(benign_path,file))
+                                        os.rename(os.path.join(root,file), os.path.join(benign_path,file))
+                                    else:
+                                        os.rename(os.path.join(root,file), os.path.join(benign_path,file))
+                                elif item.find("verdict").text == '1':
+                                    print "WildFire Malware Hash matches " + os.path.join(root,file), hash_256
+                                    if os.path.exists(os.path.join(malware_path,file)):
+                                        os.remove(os.path.join(malware_path,file))
+                                        os.rename(os.path.join(root,file), os.path.join(malware_path,file))
+                                    else:
+                                        os.rename(os.path.join(root,file), os.path.join(malware_path,file))
+                                elif item.find("verdict").text == '2':
+                                    continue
+                            else:
+                                continue
+            files = {'apikey': (None, api_key),'file': (hash_file, open(hash_file, 'rb'))}
+            xml_tree = ET.fromstring(requests.post('https://wildfire.paloaltonetworks.com/publicapi/get/verdicts', files=files).content)
+            for item in xml_tree.iter("wildfire"):
+                for item in xml_tree.iter("get-verdict-info"):
+                    for root, dirs, files in os.walk(r''+malware_path+''):
+                        for file in files:
+                            hash_256 = sha256_checksum(os.path.join(root,file))
+                            if item.find("sha256").text == hash_256:
+                                if item.find("verdict").text == '0':
+                                    print "WildFire Benign Hash matches " + os.path.join(root,file), hash_256
+                                    if os.path.exists(os.path.join(benign_path,file)):
+                                        os.remove(os.path.join(benign_path,file))
+                                        os.rename(os.path.join(root,file), os.path.join(benign_path,file))
+                                    else:
+                                        os.rename(os.path.join(root,file), os.path.join(benign_path,file))
+                                elif item.find("verdict").text == '2':
+                                    print "WildFire Grayware Hash matches " + os.path.join(root,file), hash_256
+                                    if os.path.exists(os.path.join(grayware_path,file)):
+                                        os.remove(os.path.join(grayware_path,file))
+                                        os.rename(os.path.join(root,file), os.path.join(grayware_path,file))
+                                    else:
+                                        os.rename(os.path.join(root,file), os.path.join(grayware_path,file))
+                                elif item.find("verdict").text == '1':
+                                    continue
+                            else:
+                                continue
+        else:
+            pass
 
-        files = {'apikey': (None, api_key),'file': (hash_file, open(hash_file, 'rb'))}
-        xml_tree = ET.fromstring(requests.post('https://wildfire.paloaltonetworks.com/publicapi/get/verdicts', files=files).content)
-        for item in xml_tree.iter("wildfire"):
-            for item in xml_tree.iter("get-verdict-info"):
-                for root, dirs, files in os.walk(r''+staging_directory+''):
-                    for file in files:
-                        hash_256 = sha256_checksum(os.path.join(root,file))
-                        if item.find("sha256").text == hash_256:
-                            if item.find("verdict").text == '0':
-                                print "WildFire Benign Hash matches " + os.path.join(root,file), hash_256
-                                if os.path.exists(os.path.join(benign_path,file)):
-                                    os.remove(os.path.join(benign_path,file))
-                                    os.rename(os.path.join(root,file), os.path.join(benign_path,file))
-                                else:
-                                    os.rename(os.path.join(root,file), os.path.join(benign_path,file))
-                            elif item.find("verdict").text == '1':
-                                print "WildFire Malware Hash matches " + os.path.join(root,file), hash_256
-                                if os.path.exists(os.path.join(malware_path,file)):
-                                    os.remove(os.path.join(malware_path,file))
-                                    os.rename(os.path.join(root,file), os.path.join(malware_path,file))
-                                else:
-                                    os.rename(os.path.join(root,file), os.path.join(malware_path,file))
-                            elif item.find("verdict").text == '2':
-                                print "WildFire Grayware Hash matches " + os.path.join(root,file), hash_256
-                                if os.path.exists(os.path.join(grayware_path,file)):
-                                    os.remove(os.path.join(grayware_path,file))
-                                    os.rename(os.path.join(root,file), os.path.join(grayware_path,file))
-                                else:
-                                    os.rename(os.path.join(root,file), os.path.join(grayware_path,file))
-                        else:
-                            continue
-        files = {'apikey': (None, api_key),'file': (hash_file, open(hash_file, 'rb'))}
-        xml_tree = ET.fromstring(requests.post('https://wildfire.paloaltonetworks.com/publicapi/get/verdicts', files=files).content)
-        for item in xml_tree.iter("wildfire"):
-            for item in xml_tree.iter("get-verdict-info"):
-                for root, dirs, files in os.walk(r''+benign_path+''):
-                    for file in files:
-                        hash_256 = sha256_checksum(os.path.join(root,file))
-                        if item.find("sha256").text == hash_256:
-                            if item.find("verdict").text == '1':
-                                print "WildFire Malware Hash matches " + os.path.join(root,file), hash_256
-                                if os.path.exists(os.path.join(malware_path,file)):
-                                    os.remove(os.path.join(malware_path,file))
-                                    os.rename(os.path.join(root,file), os.path.join(malware_path,file))
-                                else:
-                                    os.rename(os.path.join(root,file), os.path.join(malware_path,file))
-                            elif item.find("verdict").text == '2':
-                                print "WildFire Grayware Hash matches " + os.path.join(root,file), hash_256
-                                if os.path.exists(os.path.join(grayware_path,file)):
-                                    os.remove(os.path.join(grayware_path,file))
-                                    os.rename(os.path.join(root,file), os.path.join(grayware_path,file))
-                                else:
-                                    os.rename(os.path.join(root,file), os.path.join(grayware_path,file))
-                            elif item.find("verdict").text == '0':
-                                continue
-                        else:
-                            continue
-        files = {'apikey': (None, api_key),'file': (hash_file, open(hash_file, 'rb'))}
-        xml_tree = ET.fromstring(requests.post('https://wildfire.paloaltonetworks.com/publicapi/get/verdicts', files=files).content)
-        for item in xml_tree.iter("wildfire"):
-            for item in xml_tree.iter("get-verdict-info"):
-                for root, dirs, files in os.walk(r''+grayware_path+''):
-                    for file in files:
-                        hash_256 = sha256_checksum(os.path.join(root,file))
-                        if item.find("sha256").text == hash_256:
-                            if item.find("verdict").text == '0':
-                                print "WildFire Benign Hash matches " + os.path.join(root,file), hash_256
-                                if os.path.exists(os.path.join(benign_path,file)):
-                                    os.remove(os.path.join(benign_path,file))
-                                    os.rename(os.path.join(root,file), os.path.join(benign_path,file))
-                                else:
-                                    os.rename(os.path.join(root,file), os.path.join(benign_path,file))
-                            elif item.find("verdict").text == '1':
-                                print "WildFire Malware Hash matches " + os.path.join(root,file), hash_256
-                                if os.path.exists(os.path.join(malware_path,file)):
-                                    os.remove(os.path.join(malware_path,file))
-                                    os.rename(os.path.join(root,file), os.path.join(malware_path,file))
-                                else:
-                                    os.rename(os.path.join(root,file), os.path.join(malware_path,file))
-                            elif item.find("verdict").text == '2':
-                                continue
-                        else:
-                            continue
-        files = {'apikey': (None, api_key),'file': (hash_file, open(hash_file, 'rb'))}
-        xml_tree = ET.fromstring(requests.post('https://wildfire.paloaltonetworks.com/publicapi/get/verdicts', files=files).content)
-        for item in xml_tree.iter("wildfire"):
-            for item in xml_tree.iter("get-verdict-info"):
-                for root, dirs, files in os.walk(r''+malware_path+''):
-                    for file in files:
-                        hash_256 = sha256_checksum(os.path.join(root,file))
-                        if item.find("sha256").text == hash_256:
-                            if item.find("verdict").text == '0':
-                                print "WildFire Benign Hash matches " + os.path.join(root,file), hash_256
-                                if os.path.exists(os.path.join(benign_path,file)):
-                                    os.remove(os.path.join(benign_path,file))
-                                    os.rename(os.path.join(root,file), os.path.join(benign_path,file))
-                                else:
-                                    os.rename(os.path.join(root,file), os.path.join(benign_path,file))
-                            elif item.find("verdict").text == '2':
-                                print "WildFire Grayware Hash matches " + os.path.join(root,file), hash_256
-                                if os.path.exists(os.path.join(grayware_path,file)):
-                                    os.remove(os.path.join(grayware_path,file))
-                                    os.rename(os.path.join(root,file), os.path.join(grayware_path,file))
-                                else:
-                                    os.rename(os.path.join(root,file), os.path.join(grayware_path,file))
-                            elif item.find("verdict").text == '1':
-                                continue
-                        else:
-                            continue
-        f = open(hash_file, 'r+')
-        f.truncate()
-        f.close()
+        empty_file()
     except IOError as e:
         print e
-        conn.close()
         pass
 
     except Exception as e:
         print e
-        conn.close()
         pass
 
     except:
-        conn.close()
+        print "Unexpected error:", sys.exc_info()[0]
         pass
 
 def execute_interval():
