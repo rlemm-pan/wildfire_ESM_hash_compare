@@ -4,15 +4,9 @@ This app was written for Palo Alto Networks to compare file hashes against Wildf
 
 ## Install:
   
-  pip install pymssql‑2.1.3‑cp36‑cp36m‑win_amd64.whl
-  
   pip install hashlib
   
   pip install requests
-
-  pip install six
-  
-  pip install urllib3
   
 ## Usage:
 ```
