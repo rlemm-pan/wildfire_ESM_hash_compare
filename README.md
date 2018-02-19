@@ -1,12 +1,8 @@
-# Wildfire ESM Hash Comparison
+# Wildfire Hash Comparison
 
 This app was written for Palo Alto Networks to compare file hashes against Wildfire and move them to specific directories based on the verdict.  If the hash is not found in Wildfire, the file will be uploaded for analysis to get verdict.
 
 ## Install:
-  
-  Install Python2.7 on Windows Server where ESM is installed.  (https://github.com/BurntSushi/nfldb/wiki/Python-&-pip-Windows-installation)
-  
-  Download pymssql from here http://www.lfd.uci.edu/~gohlke/pythonlibs/#pymssql
   
   pip install pymssql‑2.1.3‑cp36‑cp36m‑win_amd64.whl
   
