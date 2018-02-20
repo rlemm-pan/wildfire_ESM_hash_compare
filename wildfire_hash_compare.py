@@ -74,7 +74,7 @@ t1.start()
 
 parser = argparse.ArgumentParser(add_help=True,
                     formatter_class=RawTextHelpFormatter,
-                    description='Usage Example: \n\nwildfire_esm_hash_compare.py -i 30 -m c:\FilesInspectedbyWildfire_Malware -b c:\FilesInspectedbyWildfire_Benign -s c:\FilesUploadedByCustomer -k YourWildFireAPIKey -f hashes.txt')
+                    description='Usage Example: \n\nwildfire_hash_compare.py -i 30 -m c:\FilesInspectedbyWildfire_Malware -b c:\FilesInspectedbyWildfire_Benign -s c:\FilesUploadedByCustomer -k YourWildFireAPIKey -f hashes.txt')
 
 parser.add_argument("-i", action="store",
                     help="Interval that scans are ran.  Example:  30.0 equals 30 Seconds")
